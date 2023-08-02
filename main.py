@@ -1,27 +1,20 @@
 import string
 from collections import Counter
 import matplotlib.pyplot as plt
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 text = open('read.txt', encoding='utf-8').read()
 lower_case = text.lower()
 cleaned_text = lower_case.translate(str.maketrans('','', string.punctuation))
 
-tokenized_word = cleaned_text.split()
+tokenized_word = word_tokenize(cleaned_text) #Tokenizes the words
 # print(tokenized_word)
 
-stop_words = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself",
-              "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself",
-              "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that", "these",
-              "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "having", "do",
-              "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as", "until", "while",
-              "of", "at", "by", "for", "with", "about", "against", "between", "into", "through", "during", "before",
-              "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under", "again",
-              "further", "then", "once", "here", "there", "when", "where", "why", "how", "all", "any", "both", "each",
-              "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than",
-              "too", "very", "s", "t", "can", "will", "just", "don", "should", "now"]
 
 final_words = []
 for word in tokenized_word:
-    if word in stop_words:
+    if word in stopwords.words('english'):
         continue
     else:
         final_words.append(word)
@@ -37,13 +30,15 @@ with open('emotions.txt','r') as file:
         if word in final_words:
             emotion_list.append(emotion)
 
-# print(emotion_list)
 w  =dict(Counter(emotion_list))
-# print(dict(w))
-# print(w.keys())
-# print(w.values())
-plt.bar(x=w.keys(), height=w.values())
-# plt.savefig('Graph.png')
+
+plt.bar(x=w.keys(), height=w.values()) #Shows the Graph of the words
 plt.show()
 
+#Sentiment Analysis
+def sentiment_analser(senti_text):
+    score = SentimentIntensityAnalyzer().polarity_scores(senti_text)
+    return score
+
+print(sentiment_analser(cleaned_text)) #returns the sentiment scores for the text
 
